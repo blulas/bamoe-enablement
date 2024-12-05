@@ -1,0 +1,189 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-transaction-spi-parent</artifactId>
+    <version>7.6.1.Final-redhat-00002</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jboss-transaction-spi-jakarta</artifactId>
+  <packaging>jar</packaging>
+  <name>JBoss Transaction SPI Jakarta</name>
+  <url>http://www.jboss.org</url>
+  <description>The Java Transaction SPI classes Jakarta edition</description>
+
+  <scm>
+    <connection>scm:git:${jboss.as.scm.connection}</connection>
+    <developerConnection>scm:git:${narayana.spi.scm.connection}</developerConnection>
+    <url>${narayana.spi.scm.url}</url>
+  </scm>
+
+  <properties>
+    <!-- The base directory for the maven release plugin to create the tag -->
+    <tagBase>https://svn.jboss.org/repos/jbossas/projects/integration/tags/</tagBase>
+    <narayana.spi.scm.url>https://github.com/jbosstm/jboss-transaction-spi</narayana.spi.scm.url>
+    <narayana.spi.scm.connection>scm:git:git@github.com:jbosstm/jboss-transaction-spi.git</narayana.spi.scm.connection>
+    <version.org.jboss.logging.jboss-logging>3.1.4.GA</version.org.jboss.logging.jboss-logging>
+    <version.org.jboss.logging.jboss-logging-processor>1.1.0.Final</version.org.jboss.logging.jboss-logging-processor>
+    <version.jakarta.transaction.jakarta.transaction-api>2.0.0</version.jakarta.transaction.jakarta.transaction-api>
+    <version.jakarta.resource.jakarta.resource-api>2.0.0</version.jakarta.resource.jakarta.resource-api>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>transform-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                  <arg value="${org.jboss:jboss-transaction-spi:jar}" />
+                  <arg value="${project.build.directory}/${project.build.finalName}.jar" />
+                  <arg value="-q" />
+                  <arg value="-o" />
+                  <arg value="-tr" />
+                  <arg value="${project.basedir}/rules/jakarta-renames.properties" />
+                  <classpath>
+                    <pathelement path="${plugin_classpath}" />
+                  </classpath>
+                </java>
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>transform-sources-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" property="source" input="${org.jboss:jboss-transaction-spi:jar}" regexp="\.jar$" replace="-sources.jar" global="true" />
+                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                  <arg value="${source}" />
+                  <arg value="${project.build.directory}/${project.build.finalName}-sources.jar" />
+                  <arg value="-q" />
+                  <arg value="-o" />
+                  <arg value="-tr" />
+                  <arg value="${project.basedir}/rules/jakarta-renames.properties" />
+                  <classpath>
+                    <pathelement path="${plugin_classpath}" />
+                  </classpath>
+                </java>
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>transform-javadoc</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                
+                <java classname="org.eclipse.transformer.jakarta.JakartaTransformer">
+                  <arg value="${source}" />
+                  <arg value="${project.build.directory}/${project.build.finalName}-javadoc.jar" />
+                  <arg value="-q" />
+                  <arg value="-o" />
+                  <arg value="-tr" />
+                  <arg value="${project.basedir}/rules/jakarta-renames.properties" />
+                  <classpath>
+                    <pathelement path="${plugin_classpath}" />
+                  </classpath>
+                </java>
+                <ac:propertyregex xmlns:ac="antlib:net.sf.antcontrib" input="${org.jboss:jboss-transaction-spi:jar}" regexp="\.jar$" property="source" replace="-javadoc.jar" global="true" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.eclipse.transformer</groupId>
+            <artifactId>org.eclipse.transformer.cli</artifactId>
+            <version>0.2.0</version>
+          </dependency>
+          <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>1.0b3</version>
+            <exclusions>
+              <exclusion>
+                <groupId>ant</groupId>
+                <artifactId>ant</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+            <execution>
+                <id>sources</id>
+                <goals>
+                    <goal>attach-artifact</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                    <artifacts>
+                        <artifact>
+                            <file>
+                                ${project.build.directory}/${project.artifactId}-${project.version}-sources.jar
+                            </file>
+                            <type>jar</type>
+                            <classifier>sources</classifier>
+                        </artifact>
+                    </artifacts>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>      
+    </plugins>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-processor</artifactId>
+      <version>${version.org.jboss.logging.jboss-logging-processor}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-transaction-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.resource</groupId>
+      <artifactId>jakarta.resource-api</artifactId>
+      <version>${version.jakarta.resource.jakarta.resource-api}</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
+      <version>${version.jakarta.transaction.jakarta.transaction-api}</version>
+    </dependency>
+  </dependencies>
+
+</project>

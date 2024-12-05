@@ -1,0 +1,224 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.kie.server</groupId>
+    <artifactId>kie-server-tests</artifactId>
+    <version>7.67.2.Final-redhat-00025</version>
+  </parent>
+
+  <artifactId>kie-server-integ-tests-common</artifactId>
+
+  <name>KIE :: Execution Server :: Tests :: Common Integration Tests</name>
+  <description>KIE Execution Server Integration Tests (REST, JMS). Can be configured to run on different supported containers.</description>
+
+  <properties>
+    <java.module.name>org.kie.server.itests.common</java.module.name>
+  </properties>
+  <dependencies>
+    <!-- Used in shared classes for Before and After steps -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- kie server deps -->
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-api</artifactId>
+    </dependency>
+
+    <!-- Clients -->
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-controller-client</artifactId>
+    </dependency>
+    <!-- Used in KieServerRouterClient -->
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-router-proxy</artifactId>
+    </dependency>
+    <!-- Used in KieControllerExecutor -->
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-controller-standalone-impl</artifactId>
+    </dependency>
+
+    <!-- Used for embedded components creation -->
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-services-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-rest-common</artifactId>
+    </dependency>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <!-- Used for REST operations -->
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxrs</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>net.jcip</groupId>
+          <artifactId>jcip-annotations</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-undertow</artifactId>
+    </dependency>
+
+    <!-- test -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+    </dependency>
+
+    <!-- Misc usage -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <!-- Cargo dependencies, used in ContainerRemoteController -->
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-api-container</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-api-generic</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-weblogic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-container-wildfly</artifactId>
+    </dependency>
+
+    <!-- Deployments for application servers -->
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server</artifactId>
+      <classifier>webc</classifier>
+      <type>war</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server</artifactId>
+      <classifier>ee7</classifier>
+      <type>war</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server</artifactId>
+      <classifier>ee8</classifier>
+      <type>war</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <configuration>
+            <systemPropertyVariables>
+              <!-- Values are supplied by specific profiles -->
+              <kie.server.remoting.url>${kie.server.remoting.url}</kie.server.remoting.url>
+              <kie.server.base.http.url>${kie.server.base.http.url}</kie.server.base.http.url>
+              <kie.server.context.factory>${kie.server.context.factory}</kie.server.context.factory>
+              <kie.server.connection.factory>${kie.server.connection.factory}</kie.server.connection.factory>
+              <kie.server.jndi.request.queue>${kie.server.jndi.request.queue}</kie.server.jndi.request.queue>
+              <kie.server.jndi.response.queue>${kie.server.jndi.response.queue}</kie.server.jndi.response.queue>
+              <org.jbpm.server.ext.disabled>true</org.jbpm.server.ext.disabled>
+              <org.drools.server.ext.disabled>true</org.drools.server.ext.disabled>
+              <org.jbpm.ui.server.ext.disabled>true</org.jbpm.ui.server.ext.disabled>
+              <org.jbpm.case.server.ext.disabled>true</org.jbpm.case.server.ext.disabled>
+              <org.kie.swagger.server.ext.disabled>true</org.kie.swagger.server.ext.disabled>
+              <org.kie.prometheus.server.ext.disabled>true</org.kie.prometheus.server.ext.disabled>
+              <org.kie.scenariosimulation.server.ext.disabled>true</org.kie.scenariosimulation.server.ext.disabled>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <configuration>
+            <nonFilteredFileExtensions>
+              <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+            </nonFilteredFileExtensions>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>false</filtering>
+      </testResource>
+      <testResource>
+        <directory>src/test/filtered-resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+      <testResource>
+        <directory>../src/test/filtered-resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven3-plugin</artifactId>
+        <configuration>
+          <container>
+            <systemProperties>
+              <org.jbpm.server.ext.disabled>true</org.jbpm.server.ext.disabled>
+              <org.drools.server.ext.disabled>true</org.drools.server.ext.disabled>
+              <org.jbpm.ui.server.ext.disabled>true</org.jbpm.ui.server.ext.disabled>
+              <org.jbpm.case.server.ext.disabled>true</org.jbpm.case.server.ext.disabled>
+              <org.kie.prometheus.server.ext.disabled>true</org.kie.prometheus.server.ext.disabled>
+              <org.kie.scenariosimulation.server.ext.disabled>true</org.kie.scenariosimulation.server.ext.disabled>
+              <org.kie.swagger.server.ext.disabled>true</org.kie.swagger.server.ext.disabled>
+              <kie.maven.settings.custom>${project.build.testOutputDirectory}/kie-server-testing-server-custom-settings.xml</kie.maven.settings.custom>
+              <org.kie.server.services.jbpm.security.filesystemrealm.folder-path>${project.basedir}/target/cargo/configurations/wildfly23x/kie-fs-realm-users</org.kie.server.services.jbpm.security.filesystemrealm.folder-path>
+            </systemProperties>
+          </container>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

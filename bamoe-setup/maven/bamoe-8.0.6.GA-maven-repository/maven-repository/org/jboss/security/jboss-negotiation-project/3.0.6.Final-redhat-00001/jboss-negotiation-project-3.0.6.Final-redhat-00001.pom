@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <relativePath></relativePath>
+    <version>35.0.0.redhat-00001</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.security</groupId>
+  <artifactId>jboss-negotiation-project</artifactId>
+  <version>3.0.6.Final-redhat-00001</version>
+  <packaging>pom</packaging>
+  <name>JBoss Negotiation Parent</name>
+  <url>http://www.jboss.com</url>
+  <description>The JBoss Negotiation Project</description>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License v2.1 or later</name>
+      <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:https://github.com/wildfly-security/jboss-negotiation.git</connection>
+    <developerConnection>scm:git:git@github.com:wildfly-security/jboss-negotiation.git</developerConnection>
+  </scm>
+
+  <properties>
+    <version.io.undertow>2.0.19.Final</version.io.undertow>
+    <version.junit>4.11</version.junit>
+    <version.org.jboss.logging.jboss-logging>3.4.0.Final</version.org.jboss.logging.jboss-logging>
+    <version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.1_spec>1.0.0.Final</version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.1_spec>
+    <version.org.picketbox>4.9.3.Final</version.org.picketbox>
+    <version.org.picketbox.picketbox-commons>1.0.0.final</version.org.picketbox.picketbox-commons>
+
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/tests/java</testSourceDirectory>
+    <finalName>${project.artifactId}</finalName>
+    <resources>
+      <resource>
+        <directory>src/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/etc</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>src/tests/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+  </build>
+
+  <dependencyManagement>
+    <!-- The parent pom manages the inter-dependencies of the modules. -->
+
+    <dependencies>
+      <!-- Local Dependencies -->
+      <dependency>
+        <groupId>org.jboss.security</groupId>
+        <artifactId>jboss-negotiation-extras</artifactId>
+        <version>3.0.6.Final-redhat-00001</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.security</groupId>
+        <artifactId>jboss-negotiation-common</artifactId>
+        <version>3.0.6.Final-redhat-00001</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.security</groupId>
+        <artifactId>jboss-negotiation-ntlm</artifactId>
+        <version>3.0.6.Final-redhat-00001</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.security</groupId>
+        <artifactId>jboss-negotiation-spnego</artifactId>
+        <version>3.0.6.Final-redhat-00001</version>
+      </dependency>
+
+      <!-- External Dependencies -->
+      <dependency>
+          <groupId>io.undertow</groupId>
+          <artifactId>undertow-core</artifactId>
+          <version>${version.io.undertow}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging</artifactId>
+        <version>${version.org.jboss.logging.jboss-logging}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.spec.javax.servlet</groupId>
+        <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+        <version>${version.org.jboss.spec.javax.servlet.jboss-servlet-api_3.1_spec}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.picketbox</groupId>
+         <artifactId>picketbox</artifactId>
+         <version>${version.org.picketbox}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.picketbox</groupId>
+         <artifactId>picketbox-commons</artifactId>
+         <version>${version.org.picketbox.picketbox-commons}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>
+<!--
+Modified by POM Manipulation Extension for Maven 2.3.1 ( SHA: f64d03ba ) 
+-->
+

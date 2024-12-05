@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>39.0.0.redhat-00009</version>
+        <relativePath />
+    </parent>
+
+    <groupId>org.infinispan.protostream</groupId>
+    <artifactId>parent</artifactId>
+    <version>4.6.5.Final-redhat-00006</version>
+    <packaging>pom</packaging>
+
+    <name>ProtoStream - parent</name>
+    <description>Parent for all ProtoStream modules</description>
+    <url>https://infinispan.org</url>
+
+    <organization>
+        <name>JBoss, a division of Red Hat</name>
+        <url>http://www.jboss.org</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>placeholder</id>
+            <name>See https://infinispan.org for a complete list of contributors</name>
+        </developer>
+    </developers>
+
+    <mailingLists>
+        <mailingList>
+            <name>Infinispan Issues</name>
+            <subscribe>https://lists.jboss.org/mailman/listinfo/infinispan-issues</subscribe>
+            <unsubscribe>https://lists.jboss.org/mailman/listinfo/infinispan-issues</unsubscribe>
+            <post>infinispan-issues@lists.jboss.org</post>
+            <archive>http://lists.jboss.org/pipermail/infinispan-issues/</archive>
+        </mailingList>
+        <mailingList>
+            <name>Infinispan Developers</name>
+            <subscribe>https://lists.jboss.org/mailman/listinfo/infinispan-dev</subscribe>
+            <unsubscribe>https://lists.jboss.org/mailman/listinfo/infinispan-dev</unsubscribe>
+            <post>infinispan-dev@lists.jboss.org</post>
+            <archive>http://lists.jboss.org/pipermail/infinispan-dev/</archive>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
+        <connection>scm:git:git@github.com:infinispan/protostream.git</connection>
+        <developerConnection>scm:git:git@github.com:infinispan/protostream.git</developerConnection>
+        <url>https://github.com/infinispan/protostream</url>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://issues.redhat.com/projects/IPROTO/issues/</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis</system>
+        <url>https://travis-ci.org/github/infinispan/protostream</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <address>infinispan-commits@lists.jboss.org</address>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>${maven.snapshots.repo.id}</id>
+            <url>${maven.snapshots.repo.url}</url>
+        </snapshotRepository>
+        <repository>
+            <id>${maven.releases.repo.id}</id>
+            <url>${maven.releases.repo.url}</url>
+        </repository>
+    </distributionManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <jboss.releases.repo.id>jboss-releases-repository</jboss.releases.repo.id>
+        <jboss.releases.nexus.url>https://repository.jboss.org/nexus</jboss.releases.nexus.url>
+        <jboss.releases.repo.url>${jboss.releases.nexus.url}/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
+        <jboss.snapshots.repo.id>jboss-snapshots-repository</jboss.snapshots.repo.id>
+        <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
+
+        <!-- overwrite plugins version from jboss-parent -->
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <version.compiler.plugin>3.10.1</version.compiler.plugin>
+        <version.jar.plugin>3.3.0</version.jar.plugin>
+        <version.javadoc.plugin>3.4.1</version.javadoc.plugin>
+        <version.source.plugin>3.2.1</version.source.plugin>
+        <version.antrun.plugin>3.1.0</version.antrun.plugin>
+        <version.surefire.plugin>3.0.0-M6</version.surefire.plugin>
+
+        <!-- plugins version -->
+        <version.maven.nexus-staging>1.6.13</version.maven.nexus-staging>
+        <version.maven.gpg>3.0.1</version.maven.gpg>
+
+        <version.junit>4.13.2</version.junit>
+        <version.compile-testing>0.19</version.compile-testing>
+        <version.mockito>4.3.1</version.mockito>
+        <version.jcipannotations>1.0.0.redhat-8</version.jcipannotations>
+        <version.fest.assertions>2.0M10</version.fest.assertions>
+        <version.protoparser>4.0.3.redhat-00001</version.protoparser>
+        <version.jboss.logging>3.5.0.Final-redhat-00003</version.jboss.logging>
+        <version.jboss.logging.annotations>2.2.1.Final-redhat-00002</version.jboss.logging.annotations>
+        <version.jboss.logging.processor>2.2.1.Final-redhat-00002</version.jboss.logging.processor>
+        <version.log4j>2.18.0.redhat-00001</version.log4j>
+        <version.jboss.marshalling>2.1.1.Final-redhat-00001</version.jboss.marshalling>
+        <version.javassist>3.29.1.GA-redhat-00001</version.javassist>
+        <version.jackson>2.14.1.redhat-00001</version.jackson>
+        <version.auto-service>1.0.1</version.auto-service>
+        <version.assertj>3.24.2</version.assertj>
+
+        <!-- maven repository urls -->
+        <maven.releases.nexus.url>https://s01.oss.sonatype.org/</maven.releases.nexus.url>
+        <maven.releases.repo.id>ossrh</maven.releases.repo.id>
+        <maven.releases.repo.url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</maven.releases.repo.url>
+        <maven.snapshots.repo.id>ossrh</maven.snapshots.repo.id>
+        <maven.snapshots.repo.url>https://s01.oss.sonatype.org/content/repositories/snapshots</maven.snapshots.repo.url>
+    </properties>
+
+    <repositories>
+        
+    </repositories>
+
+    <pluginRepositories>
+        
+    </pluginRepositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>protostream</artifactId>
+                <version>4.6.5.Final-redhat-00006</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>protostream-processor</artifactId>
+                <version>4.6.5.Final-redhat-00006</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>protostream-processor</artifactId>
+                <version>4.6.5.Final-redhat-00006</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${version.log4j}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${version.log4j}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${version.log4j}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jul</artifactId>
+                <version>${version.log4j}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>${version.jboss.logging}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging-annotations</artifactId>
+                <version>${version.jboss.logging.annotations}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging-processor</artifactId>
+                <version>${version.jboss.logging.processor}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup</groupId>
+                <artifactId>protoparser</artifactId>
+                <version>${version.protoparser}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${version.javassist}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${version.jackson}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${version.auto-service}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${version.assertj}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.testing.compile</groupId>
+                <artifactId>compile-testing</artifactId>
+                <version>0.18</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${version.mockito}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>net.jcip</groupId>
+                <artifactId>jcip-annotations</artifactId>
+                <version>${version.jcipannotations}</version>
+                <scope>provided</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.easytesting</groupId>
+                <artifactId>fest-assert-core</artifactId>
+                <version>${version.fest.assertions}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.marshalling</groupId>
+                <artifactId>jboss-marshalling</artifactId>
+                <version>${version.jboss.marshalling}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.marshalling</groupId>
+                <artifactId>jboss-marshalling-river</artifactId>
+                <version>${version.jboss.marshalling}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <release>11</release>
+                        <encoding>UTF-8</encoding>
+                        <!-- both maven and javac are buggy regarding handling of APs with incremental compilation -->
+                        <useIncrementalCompilation>false</useIncrementalCompilation>
+                        <!-- Include method parameter debug info -->
+                        <parameters>true</parameters>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${version.maven.nexus-staging}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>${version.surefire.plugin}</version>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${version.maven.gpg}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <configuration>
+                                <passphraseServerId>gpg.passphrase</passphraseServerId>
+                                <gpgArguments>
+                                    <arg>--pinentry-mode</arg>
+                                    <arg>loopback</arg>
+                                </gpgArguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>1.13.0</version>
+                    <configuration>
+                        <tag>${project.version}</tag>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>8</source>
+                    <doclint>none</doclint>
+                    <detectLinks>false</detectLinks>
+                    <detectOfflineLinks>false</detectOfflineLinks>
+                    <offlineLinks>
+                        <offlineLink>
+                            <url>https://docs.oracle.com/javase/8/docs/api/</url>
+                            <location>${project.build.directory}/javadoc-bundle-options/</location>
+                        </offlineLink>
+                    </offlineLinks>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+          <execution>
+            <id>enforce-java</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[${maven.compiler.source},)</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>[3.6.0,)</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+            </plugin>
+            
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>extras</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Make sure we generate src jars too -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                    <goal>test-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <inherited>true</inherited>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>community-release</id>
+            <activation>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

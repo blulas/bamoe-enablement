@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.uberfire</groupId>
+    <artifactId>uberfire-parent</artifactId>
+    <version>7.67.2.Final-redhat-00025</version>
+  </parent>
+
+  <artifactId>uberfire-message-console</artifactId>
+  <packaging>pom</packaging>
+
+  <name>UberFire - Message Console</name>
+  <description>UberFire - Message Console</description>
+
+  <modules>
+    <module>uberfire-message-console-api</module>
+    <module>uberfire-message-console-backend</module>
+    <module>uberfire-message-console-client</module>
+  </modules>
+
+</project>

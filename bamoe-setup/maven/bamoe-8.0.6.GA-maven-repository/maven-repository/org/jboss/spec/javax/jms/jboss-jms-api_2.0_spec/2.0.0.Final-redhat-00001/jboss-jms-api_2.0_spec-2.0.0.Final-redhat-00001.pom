@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2017, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"> <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>35.0.0.redhat-00001</version>
+    </parent>
+
+    <groupId>org.jboss.spec.javax.jms</groupId>
+    <artifactId>jboss-jms-api_2.0_spec</artifactId>
+    <version>2.0.0.Final-redhat-00001</version>
+    <packaging>jar</packaging>
+
+    <name>Jakarta Messaging API</name>
+    <description>Jakarta Messaging describes a means for Java applications to create, send, 
+        and receive messages via loosely coupled, reliable asynchronous communication services.</description>
+    <url>https://github.com/jboss/jboss-jakarta-jms-api</url>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License 2.0</name>
+            <url>https://projects.eclipse.org/license/epl-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>GNU General Public License, version 2 with the GNU Classpath Exception</name>
+            <url>https://projects.eclipse.org/license/secondary-gpl-2.0-cp</url>
+            <distribution>repo</distribution>
+        </license>
+   </licenses>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://issues.jboss.org/projects/JBEE/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:ssh://git@github.com/jboss/jboss-jakarta-jms-api.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jboss/jboss-jakarta-jms-api.git</developerConnection>
+        <url>https://github.com/jboss/jboss-jakarta-jms-api</url>
+      <tag>jboss-jms-api_2.0_spec-2.0.0.Final</tag>
+  </scm>
+
+    <properties>
+        <!--
+            After every promotion build:
+              - increment spec.build
+            To re-spin a promotion build:
+              - change the project <version> back to the previous value
+              - commit the change
+
+            When the spec turns final:
+              - change spec.non.final to false
+              - change spec.version to the value of spec.newVersion
+              - comment out spec.newVersion
+              - comment out spec.build
+              - update the project <version> to not have -bXX
+        -->
+        <spec.title>Jakarta Messaging Specification</spec.title>
+        <spec.version>2.0</spec.version>
+        <spec.newVersion>2.1</spec.newVersion>
+        <spec.build>01</spec.build>
+        <spec.impl.version>${version}</spec.impl.version>
+        <spec.extension.name>javax.jms</spec.extension.name>
+        <spec.non.final>false</spec.non.final>
+        <spec.api.package>jakarta.jms</spec.api.package>
+    </properties>
+
+    <build>
+
+        <resources>
+             <resource>
+                <directory>${project.basedir}/..</directory>
+                <includes>
+                    <include>LICENSE.md</include>
+                    <include>NOTICE.md</include>
+                </includes>
+                <targetPath>META-INF</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>LICENSE.md</include>
+                    <include>NOTICE.md</include>
+                </includes>
+                <targetPath>META-INF</targetPath>
+            </resource>
+        </resources>
+
+        <plugins>
+           <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultSpecificationEntries>false</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>beta.jboss.jms.api_2_0</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                    <instructions>
+                        <Bundle-Version>${version}</Bundle-Version>
+                        <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>
+                        <Extension-Name>${spec.extension.name}</Extension-Name>
+                        <Implementation-Version>${version}</Implementation-Version>
+                        <Specification-Version>${spec.version}</Specification-Version>
+                        <Bundle-Description>Jakarta Messaging ${spec.version} Specification</Bundle-Description>
+                        <Implementation-Vendor-Id>${groupId}</Implementation-Vendor-Id>
+                        <Specification-Vendor>Eclipse Foundation</Specification-Vendor>
+                        <Specification-Title>${spec.title}</Specification-Title>
+                        <Implementation-Title>${spec.title}</Implementation-Title>
+                        <!-- Set the package version to match the spec version -->
+                        <Export-Package>javax.jms*;version=2.0</Export-Package>
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- 
+               Create Javadoc for API jar
+             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-api-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <source>1.8</source>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                            <description>Jakarta Messaging API documentation</description>
+                            <doctitle>Jakarta Messaging API documentation</doctitle>
+                            <windowtitle>Jakarta Messaging API documentation</windowtitle>
+                            <header><![CDATA[<br>Jakarta Messaging API v${project.version}]]></header>
+                            <bottom><![CDATA[
+Comments to: <a href="mailto:jms-dev@eclipse.org">jms-dev@eclipse.org</a>.<br>
+Copyright &#169; 2019 Eclipse Foundation. All rights reserved.<br>
+Use is subject to <a href="{@docRoot}/doc-files/speclicense.html" target="_top">license terms</a>.]]>
+                            </bottom>
+                            <docfilessubdirs>true</docfilessubdirs>
+                            <groups>
+                                <group>
+                                    <title>Jakarta Messaging API Documentation</title>
+                                    <packages>javax.jms</packages>
+                                </group>
+                            </groups>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+        <groupId>org.commonjava.maven.plugins</groupId>
+        <artifactId>project-sources-maven-plugin</artifactId>
+        <version>0.3</version>
+        <executions>
+          <execution>
+            <id>project-sources-archive</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>archive</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+            <plugin>
+        <groupId>com.redhat.rcm.maven.plugin</groupId>
+        <artifactId>buildmetadata-maven-plugin</artifactId>
+        <version>1.7.0</version>
+        <executions>
+          <execution>
+            <id>build-metadata</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>provide-buildmetadata</goal>
+            </goals>
+            <configuration>
+              <addToLocations>
+                <addToLocation>${session.executionRootDirectory}</addToLocation>
+              </addToLocations>
+              <activateOutputFileMapping>true</activateOutputFileMapping>
+              <addBuildDateInfo>false</addBuildDateInfo>
+              <addLocallyModifiedTagToFullVersion>false</addLocallyModifiedTagToFullVersion>
+              <addHostInfo>false</addHostInfo>
+              <addJavaRuntimeInfo>true</addJavaRuntimeInfo>
+              <addToFilters>false</addToFilters>
+              <validateCheckout>false</validateCheckout>
+              <addOsInfo>false</addOsInfo>
+              <hideJavaOptsInfo>false</hideJavaOptsInfo>
+              <forceNewProperties>true</forceNewProperties>
+              <hideCommandLineInfo>false</hideCommandLineInfo>
+              <addBuildDateToFullVersion>false</addBuildDateToFullVersion>
+              <createPropertiesReport>true</createPropertiesReport>
+              <addToGeneratedSources>false</addToGeneratedSources>
+              <createXmlReport>false</createXmlReport>
+              <propertiesOutputFile>build.metadata</propertiesOutputFile>
+              <addMavenExecutionInfo>false</addMavenExecutionInfo>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+        </plugins>
+    </build>
+
+</project>
+<!--
+Modified by POM Manipulation Extension for Maven 2.3.1 ( SHA: f64d03ba ) 
+-->
+

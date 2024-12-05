@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+~ Copyright 2012 Red Hat, Inc. and/or its affiliates.
+~
+~ Licensed under the Apache License, Version 2.0 (the "License");
+~ you may not use this file except in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~       http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing, software
+~ distributed under the License is distributed on an "AS IS" BASIS,
+~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~ See the License for the specific language governing permissions and
+~ limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.kie</groupId>
+    <artifactId>kie-parent</artifactId>
+    <version>7.67.2.Final-redhat-00025</version>
+  </parent>
+
+  <artifactId>kie-wb-distributions</artifactId>
+
+  <packaging>pom</packaging>
+
+  <version>7.67.2.Final-redhat-00025</version>
+  <name>Business Central - Distributions</name>
+  <description>Business Central - Distributions</description>
+
+  <properties>
+    <deployable.classifier.wildfly>wildfly23</deployable.classifier.wildfly>
+    <deployable.classifier.eap7>eap7</deployable.classifier.eap7>
+    <deployable.classifier.standalone>standalone</deployable.classifier.standalone>
+
+    <spotbugs.failOnViolation>true</spotbugs.failOnViolation>
+    <errai.marshalling.very_short_names>false</errai.marshalling.very_short_names>
+    <!-- The version greater than 1.0.0.GA is not compatible with GWT 2.8.x -->
+    <version.javax.validation>1.0.0.GA</version.javax.validation>
+    <wildfly.bootable.jar.gav>org.wildfly:wildfly-galleon-pack:${version.org.wildfly}</wildfly.bootable.jar.gav>
+    <wildfly.bootable.productized.jar.gav>org.jboss.eap:wildfly-galleon-pack:4.0.2.GA-redhat-00002</wildfly.bootable.productized.jar.gav>
+  </properties>
+
+  <repositories>
+    <!-- Bootstrap repository to locate the parent pom when the parent pom has not been build locally. -->
+    
+  </repositories>
+
+  <modules>
+    <module>business-central-parent</module>
+    <module>business-central-tests</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.errai.bom</groupId>
+        <artifactId>errai-internal-bom</artifactId>
+        <version>${version.org.jboss.errai}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.uberfire</groupId>
+        <artifactId>uberfire-bom</artifactId>
+        <version>${version.org.kie}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.kie.soup</groupId>
+        <artifactId>kie-soup-bom</artifactId>
+        <version>${version.org.kie}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.kie</groupId>
+        <artifactId>kie-bom</artifactId>
+        <version>${version.org.kie}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-bom</artifactId>
+        <version>${version.org.kie}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jbpm</groupId>
+        <artifactId>jbpm-bom</artifactId>
+        <version>${version.org.kie}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.kie.uberfire</groupId>
+        <artifactId>kie-uberfire-extensions-bom</artifactId>
+        <version>${version.org.kie}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.kie</groupId>
+        <artifactId>kie-dmn-bom</artifactId>
+        <version>${version.org.kie}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- dependencies for jbpm-server-distribution -->
+      <dependency>
+        <groupId>org.jbpm</groupId>
+        <artifactId>jbpm-wb-case-mgmt-showcase</artifactId>
+        <version>7.67.2.Final-redhat-00025</version>
+        <classifier>${deployable.classifier.wildfly}</classifier>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.kie</groupId>
+        <artifactId>business-central</artifactId>
+        <version>7.67.2.Final-redhat-00025</version>
+        <classifier>${deployable.classifier.wildfly}</classifier>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.jbpm.contrib</groupId>
+        <artifactId>repository-wildfly</artifactId>
+        <version>7.67.2.Final-redhat-00025</version>
+        <type>war</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+
+      <!--Fix translations from Zanata -->
+      <plugin>
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*_de.properties</include>
+            <include>**/*_es.properties</include>
+            <include>**/*_fr.properties</include>
+            <include>**/*_ja.properties</include>
+            <include>**/*_pt_BR.properties</include>
+            <include>**/*_zh_CN.properties</include>
+          </includes>
+          <excludes>
+            <exclude>**/ErraiApp.properties</exclude>
+            <exclude>**/LoginConstants*.properties</exclude>
+          </excludes>
+          <replacements>
+            <replacement>
+              <token>''</token>
+              <value>'</value>
+            </replacement>
+            <replacement>
+              <token>'</token>
+              <value>''</value>
+            </replacement>
+          </replacements>
+        </configuration>
+      </plugin>
+
+      <!-- Zanata - translations -->
+      <plugin>
+        <groupId>org.zanata</groupId>
+        <artifactId>zanata-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>native2ascii-maven-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>business-central-parent/business-central-webapp/src/main/resources/org/kie/bc/client/resources/i18n/LoginConstants*.properties</include>
+          </includes>
+          <workDir>.</workDir>
+          <tempDir>.</tempDir>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.coderplus.maven.plugins</groupId>
+        <artifactId>copy-rename-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- Temporary workaround for https://issues.jboss.org/browse/ERRAI-1101. Needs to stay here until
+        we find a general solution (e.g. moving all localized code to Errai TranslationService. -->
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-default-i18n-resource</id>
+            <phase>process-resources</phase>
+            <configuration>
+              <target>
+                <copy todir="${project.build.directory}/classes" includeemptydirs="false" failonerror="false" quiet="true">
+                  <fileset dir="${project.build.directory}/classes" />
+                  <globmapper from="*Constants.properties" to="*Constants_default.properties" />
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+    <pluginManagement />
+  </build>
+
+  <profiles>
+
+    <profile>
+      <id>productizedProfile</id>
+      <activation>
+        <property>
+          <name>productized</name>
+        </property>
+      </activation>
+      <properties>
+        <errai.marshalling.very_short_names>true</errai.marshalling.very_short_names>
+      </properties>
+    </profile>
+
+  </profiles>
+
+</project>
+<!--
+Modified by POM Manipulation Extension for Maven 4.16 ( SHA: 352ae4a7 )
+-->

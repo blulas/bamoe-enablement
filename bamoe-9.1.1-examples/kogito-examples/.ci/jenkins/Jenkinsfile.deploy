@@ -1,0 +1,322 @@
+import org.jenkinsci.plugins.workflow.libs.Library
+@Library('jenkins-pipeline-shared-libraries')_
+
+import org.kie.jenkins.MavenCommand
+
+deployProperties = [:]
+
+examplesHelper = null
+
+pipeline {
+    agent {
+        docker { 
+            image env.AGENT_DOCKER_BUILDER_IMAGE
+            args env.AGENT_DOCKER_BUILDER_ARGS
+            label util.avoidFaultyNodes()
+        }
+    }
+
+    options {
+        timestamps()
+        timeout(time: 180, unit: 'MINUTES')
+    }
+
+    environment {
+        KOGITO_CI_EMAIL_TO = credentials("${JENKINS_EMAIL_CREDS_ID}")
+
+        PR_BRANCH_HASH = "${util.generateHash(10)}"
+    }
+
+    stages {
+        stage('Initialize') {
+            steps {
+                script {
+                    cleanWs(disableDeferredWipeout: true)
+
+                    checkout scm
+                    examplesHelper = load '.ci/jenkins/helper_scripts/examples.groovy'
+
+                    if (params.DISPLAY_NAME) {
+                        currentBuild.displayName = params.DISPLAY_NAME
+                    }
+
+                    if (isRelease() || isCreatePr()) {
+                        // Verify version is set
+                        assert getProjectVersion()
+                        assert getDroolsVersion()
+
+                        if (isRelease()) {
+                            // Verify if on right release branch
+                            assert getBuildBranch() == util.getReleaseBranchFromVersion(getProjectVersion())
+                        }
+                    }
+                    dir(getRepoName()) {
+                        checkoutRepo()
+                    }
+                }
+            }
+            post {
+                success {
+                    script {
+                        setDeployPropertyIfNeeded('git.branch', getBuildBranch())
+                        setDeployPropertyIfNeeded('git.author', getGitAuthor())
+                        setDeployPropertyIfNeeded('project.version', getProjectVersion())
+                        setDeployPropertyIfNeeded('release', isRelease())
+                        setDeployPropertyIfNeeded('drools.version', getDroolsVersion())
+                    }
+                }
+            }
+        }
+
+        stage('Prepare for PR') {
+            when {
+                expression { return isRelease() || isCreatePr() }
+            }
+            steps {
+                script {
+                    dir(getRepoName()) {
+                        if (githubscm.isBranchExist('origin',getPRBranch())) {
+                            githubscm.removeRemoteBranch('origin', getPRBranch(), getGitAuthorPushCredsId())
+                        }
+                        githubscm.createBranch(getPRBranch())
+                    }
+                }    
+            }
+        }
+        stage('Update project version') {
+            when {
+                expression { return getProjectVersion() }
+            }
+            steps {
+                script {
+                    dir(getRepoName()) {
+                        def oldKogitoVersion = readMavenPom(file: 'pom.xml').version
+                        echo "Got old Kogito version ${oldKogitoVersion}"
+                        configFileProvider([configFile(fileId: env.MAVEN_SETTINGS_CONFIG_FILE_ID, variable: 'MAVEN_SETTINGS_FILE')]){
+                            maven.mvnVersionsUpdateParentAndChildModules(
+                                getMavenCommand().withSettingsXmlFile(MAVEN_SETTINGS_FILE),
+                                getProjectVersion(),
+                                true
+                            )
+                            maven.mvnSetVersionProperty(
+                                getMavenCommand().withSettingsXmlFile(MAVEN_SETTINGS_FILE),
+                                'version.org.kie.kogito',
+                                getProjectVersion()
+                            )
+                            maven.mvnSetVersionProperty(
+                                getMavenCommand().withSettingsXmlFile(MAVEN_SETTINGS_FILE),
+                                'kogito.bom.version',
+                                getProjectVersion()
+                            )
+                            maven.mvnSetVersionProperty(
+                                getMavenCommand().withSettingsXmlFile(MAVEN_SETTINGS_FILE),
+                                'version.org.drools',
+                                getDroolsVersion()
+                            )
+                        }
+
+                        if (getProjectVersion() != oldKogitoVersion) {
+                            def status = sh(script: "grep -ir '${oldKogitoVersion}' --include='pom.xml'", returnStatus: true)
+                            if (status == 0) {
+                                error "Old Kogito version ${oldKogitoVersion} is still present into the project... Please review it..."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('Build kogito-examples') {
+            steps {
+                script {
+                    def mvnCmd = getMavenCommand()
+                        .withOptions(env.BUILD_MVN_OPTS_CURRENT ? [ env.BUILD_MVN_OPTS_CURRENT ] : [])
+                        .withOptions(env.KOGITO_EXAMPLES_BUILD_MVN_OPTS ? [ env.KOGITO_EXAMPLES_BUILD_MVN_OPTS ] : [])
+                        .withProperty('maven.test.failure.ignore', true)
+                    if (params.SKIP_TESTS) {
+                        mvnCmd.skipTests() // Conflict somehow with Python testing. If `skipTests={anyvalue}` is set, then exec plugin is not executed ...
+                    }
+                    configFileProvider([configFile(fileId: env.MAVEN_SETTINGS_CONFIG_FILE_ID, variable: 'MAVEN_SETTINGS_FILE')]){
+                        mvnCmd
+                            .withSettingsXmlFile(MAVEN_SETTINGS_FILE)
+                            .run('clean install')
+                    }
+                }
+            }
+            post {
+                always {
+                    script {
+                        saveReports()
+                        util.archiveConsoleLog()
+                    }
+                }
+            }
+        }
+        stage('Deploy parent poms') {
+            when {
+                expression { shouldDeployToRepository() }
+            }
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: env.MAVEN_REPO_CREDS_ID, usernameVariable: 'REPOSITORY_USER', passwordVariable: 'REPOSITORY_TOKEN')]) {
+                        configFileProvider([configFile(fileId: env.MAVEN_SETTINGS_CONFIG_FILE_ID, variable: 'MAVEN_SETTINGS_FILE')]){
+                            getMavenCommand()
+                                .withOptions(env.BUILD_MVN_OPTS_CURRENT ? [ env.BUILD_MVN_OPTS_CURRENT ] : [])
+                                .withOptions(env.KOGITO_EXAMPLES_BUILD_MVN_OPTS ? [ env.KOGITO_EXAMPLES_BUILD_MVN_OPTS ] : [])
+                                .withOptions("-pl .,kogito-quarkus-examples,kogito-springboot-examples,serverless-workflow-examples")
+                                .skipTests(true)
+                                .withSettingsXmlFile(MAVEN_SETTINGS_FILE)
+                                .run("deploy -DdeployAtEnd -Dapache.repository.username=${REPOSITORY_USER} -Dapache.repository.password=${REPOSITORY_TOKEN} -DretryFailedDeploymentCount=5")
+                        }
+                    }
+                }
+            }
+        }
+        stage('Create PR') {
+            when {
+                expression { return isRelease() || isCreatePr() }
+            }
+            steps {
+                script {
+                    dir(getRepoName()) {
+                        commitAndCreatePR()
+
+                        setDeployPropertyIfNeeded("${getRepoName()}.pr.source.uri", "https://github.com/${getGitAuthor()}/${getRepoName()}")
+                        setDeployPropertyIfNeeded("${getRepoName()}.pr.source.ref", getPRBranch())
+                        setDeployPropertyIfNeeded("${getRepoName()}.pr.target.uri", "https://github.com/${getGitAuthor()}/${getRepoName()}")
+                        setDeployPropertyIfNeeded("${getRepoName()}.pr.target.ref", getBuildBranch())
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                def propertiesStr = deployProperties.collect { entry ->  "${entry.key}=${entry.value}" }.join('\n')
+                writeFile(text: propertiesStr, file: env.PROPERTIES_FILE_NAME)
+                archiveArtifacts(artifacts: env.PROPERTIES_FILE_NAME)
+            }
+        }
+        unsuccessful {
+            sendNotification()
+        }
+        cleanup {
+            script {
+                util.cleanNode()
+            }
+        }
+    }
+}
+
+void sendNotification() {
+    if (params.SEND_NOTIFICATION) {
+        mailer.sendMarkdownTestSummaryNotification('Deploy', "[${getBuildBranch()}] Kogito Examples", [env.KOGITO_CI_EMAIL_TO])
+    } else {
+        echo 'No notification sent per configuration'
+    }
+}
+
+void saveReports() {
+    junit testResults: '**/target/surefire-reports/**/*.xml, **/target/failsafe-reports/**/*.xml', allowEmptyResults: true
+}
+
+void checkoutRepo() {
+    deleteDir()
+    checkout(githubscm.resolveRepository(getRepoName(), getGitAuthor(), getBuildBranch(), false, getGitAuthorCredsId()))
+}
+
+void addNotIgnoredPoms() {
+    // based on https://stackoverflow.com/a/59888964/8811872
+    sh '''
+    find . -type f -name 'pom.xml' > found_poms.txt
+    poms_to_add=""
+    while IFS= read -r pom; do
+        if ! git check-ignore -q "\$pom"; then
+            poms_to_add="\$poms_to_add \$pom"
+        fi
+    done < found_poms.txt
+    rm found_poms.txt
+    git add \$poms_to_add
+    git status
+    '''
+}
+
+void commitAndCreatePR() {
+    def commitMsg = "[${getBuildBranch()}] Update version to ${getProjectVersion()}"
+    def prBody = "Generated by build ${BUILD_TAG}: ${BUILD_URL}."
+    if (isRelease()) {
+        prBody += '\nPlease do not merge, it should be merged automatically after testing.'
+    } else {
+        prBody += '\nPlease review and merge.'
+    }
+    // Not using githubscm.commitChanges() because globbing won't work.
+    // See: https://github.com/apache/incubator-kie-kogito-runtimes/pull/570#discussion_r449268738
+    addNotIgnoredPoms()
+    githubscm.setUserConfigFromCreds(getGitAuthorPushCredsId())
+    sh "git commit -m '${commitMsg}'"
+    githubscm.pushObject('origin', getPRBranch(), getGitAuthorPushCredsId())
+    deployProperties["${getRepoName()}.pr.link"] = githubscm.createPRWithLabels(commitMsg, prBody, getBuildBranch(), ['skip-ci'] as String[], getGitAuthorCredsId())
+}
+
+boolean shouldDeployToRepository() {
+    return env.MAVEN_DEPLOY_REPOSITORY && env.MAVEN_REPO_CREDS_ID && getGitAuthor() == 'apache'
+}
+
+boolean isRelease() {
+    return env.RELEASE ? env.RELEASE.toBoolean() : false
+}
+
+boolean isCreatePr() {
+    return params.CREATE_PR
+}
+
+String getRepoName() {
+    return env.REPO_NAME
+}
+
+String getGitAuthor() {
+    // GIT_AUTHOR can be env or param
+    return "${GIT_AUTHOR}"
+}
+
+String getBuildBranch() {
+    return params.BUILD_BRANCH_NAME
+}
+
+String getProjectVersion() {
+    return params.PROJECT_VERSION
+}
+
+String getDroolsVersion() {
+    return params.DROOLS_VERSION
+}
+
+String getPRBranch() {
+    return params.KOGITO_PR_BRANCH
+}
+
+String getGitAuthorCredsId() {
+    return env.GIT_AUTHOR_CREDS_ID
+}
+
+String getGitAuthorPushCredsId() {
+    return env.GIT_AUTHOR_PUSH_CREDS_ID
+}
+
+void setDeployPropertyIfNeeded(String key, def value) {
+    if (value != null && value != '') {
+        deployProperties[key] = value
+    }
+}
+
+MavenCommand getMavenCommand(String directory = '') {
+    directory = directory ?: getRepoName()
+    MavenCommand mvnCmd = new MavenCommand(this, ['-fae', '-ntp'])
+                                .withOptions(env.BUILD_MVN_OPTS ? [ env.BUILD_MVN_OPTS ] : [])
+                                .inDirectory(directory)
+                                .withProperty('full')
+    if (env.MAVEN_DEPENDENCIES_REPOSITORY) {
+        mvnCmd.withDependencyRepositoryInSettings('deps-repo', env.MAVEN_DEPENDENCIES_REPOSITORY)
+    }
+    return mvnCmd
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>jboss-parent</artifactId>
+    <groupId>org.jboss</groupId>
+    <version>16.0.0.redhat-1</version>
+  </parent>
+
+  <groupId>net.jcip</groupId>
+  <artifactId>jcip-annotations</artifactId>
+  <version>1.0.0.redhat-8</version>
+  <packaging>jar</packaging>
+  <name>Java Concurrency in Practice book annotations</name>
+  <url>http://jcip.net/</url>
+  <licenses>
+    <license>
+      <name>Creative Commons Attribution license 2.5</name>
+      <url>http://creativecommons.org/licenses/by/2.5/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>http://git.app.eng.bos.redhat.com/git/jcip-annotations.git</url>
+    <connection>scm:git:git://git.app.eng.bos.redhat.com/jcip-annotations.git</connection>
+    <developerConnection>scm:git:ssh://git.app.eng.bos.redhat.com/srv/git/jcip-annotations.git</developerConnection>
+  </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.commonjava.maven.plugins</groupId>
+        <artifactId>project-sources-maven-plugin</artifactId>
+        <version>0.3</version>
+        <executions>
+          <execution>
+            <id>project-sources-archive</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>archive</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.redhat.rcm.maven.plugin</groupId>
+        <artifactId>buildmetadata-maven-plugin</artifactId>
+        <version>1.5.2</version>
+        <executions>
+          <execution>
+            <id>build-metadata</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>provide-buildmetadata</goal>
+            </goals>
+            <configuration>
+              <validateCheckout>false</validateCheckout>
+              <hideJavaOptsInfo>false</hideJavaOptsInfo>
+              <activateOutputFileMapping>false</activateOutputFileMapping>
+              <createXmlReport>false</createXmlReport>
+              <hideCommandLineInfo>false</hideCommandLineInfo>
+              <propertiesOutputFile>${basedir}/build.metadata</propertiesOutputFile>
+              <createPropertiesReport>true</createPropertiesReport>
+              <addMavenExecutionInfo>true</addMavenExecutionInfo>
+              <addLocallyModifiedTagToFullVersion>false</addLocallyModifiedTagToFullVersion>
+              <addJavaRuntimeInfo>true</addJavaRuntimeInfo>
+              <hideMavenOptsInfo>false</hideMavenOptsInfo>
+              <forceNewProperties>true</forceNewProperties>
+              <addToGeneratedSources>false</addToGeneratedSources>
+            </configuration>
+          </execution>
+        </executions>
+        <inherited>false</inherited>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+<!-- Modified by POM Manipulation Extension for Maven 1.5.2 ( SHA: a390f5e2 ) -->
+

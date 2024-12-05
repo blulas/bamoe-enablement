@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bouncycastle-project</artifactId>
+    <version>1.76.0.redhat-00001</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <groupId>org.bouncycastle</groupId>
+  <artifactId>bcutil-jdk18on</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Bouncy Castle ASN.1 Extension and Utility APIs</name>
+  <description>The Bouncy Castle Java APIs for ASN.1 extension and utility APIs used to support bcpkix and bctls. This jar contains APIs for JDK 1.5 and up.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk18on</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>

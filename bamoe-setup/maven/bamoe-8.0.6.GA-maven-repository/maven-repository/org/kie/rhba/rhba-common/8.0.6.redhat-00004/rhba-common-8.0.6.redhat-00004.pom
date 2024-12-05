@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2013, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.kie.rhba</groupId>
+    <artifactId>rhba-parent</artifactId>
+    <version>8.0.6.redhat-00004</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <name>Red Hat Business Automation common</name>
+  <groupId>org.kie.rhba</groupId>
+  <artifactId>rhba-common</artifactId>
+  <packaging>pom</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <version.org.jboss.eap>7.4.0.GA-redhat-00005</version.org.jboss.eap>
+    <generate-secure-conf-eap>generate-secure-conf-eap</generate-secure-conf-eap>
+    <license-subfolder>docs/licenses-rhba</license-subfolder>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>get-EAP-dist</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.jboss.eap</groupId>
+                  <artifactId>wildfly-ee-dist</artifactId>
+                  <version>${version.org.jboss.eap}</version>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-standalone-conf-eap7</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy todir="${project.build.directory}/${generate-secure-conf-eap}/standalone/">
+                  <fileset dir="${project.build.directory}/${eap.basedir}/standalone" />
+                </copy>
+
+                <copy file="${project.build.directory}/${eap.basedir}/bin/standalone.conf" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf" token="-Xms1303m -Xmx1303m" value="-Xms2G -Xmx2G" />
+                <copy file="${project.build.directory}/${eap.basedir}/bin/standalone.conf.bat" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf.bat" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf.bat" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf.bat" token="-Xms1G -Xmx1G" value="-Xms2G -Xmx2G" />
+                <copy file="${project.build.directory}/${eap.basedir}/bin/standalone.conf.ps1" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf.ps1" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf.ps1" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+                <replaceregexp file="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone.conf.ps1" match="-(Xms|Xmx)1G" replace="-\12G" byline="true" />
+
+                <copy file="${project.build.directory}/${eap.basedir}/bin/appclient.conf" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/appclient.conf" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/appclient.conf" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+                <copy file="${project.build.directory}/${eap.basedir}/bin/appclient.conf.bat" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/appclient.conf.bat" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/appclient.conf.bat" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+                <copy file="${project.build.directory}/${eap.basedir}/bin/appclient.conf.ps1" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/appclient.conf.ps1" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/appclient.conf.ps1" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+
+                <copy file="${project.build.directory}/${eap.basedir}/bin/domain.conf" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/domain.conf" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/domain.conf" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+                <copy file="${project.build.directory}/${eap.basedir}/bin/domain.conf.bat" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/domain.conf.bat" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/domain.conf.bat" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+                <copy file="${project.build.directory}/${eap.basedir}/bin/domain.conf.ps1" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/domain.conf.ps1" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/domain.conf.ps1" token="MaxMetaspaceSize=256m" value="MaxMetaspaceSize=1024m" />
+
+                <concat destfile="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone-secure.conf">
+                  <filelist dir="${project.build.directory}/${generate-secure-conf-eap}/bin" files="standalone.conf" />
+                  <filelist dir="src/main/resources/" files="security.conf" />
+                </concat>
+                <concat destfile="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone-secure.conf.bat">
+                  <filelist dir="${project.build.directory}/${generate-secure-conf-eap}/bin" files="standalone.conf.bat" />
+                  <filelist dir="src/main/resources/" files="security.conf.bat" />
+                </concat>
+                <copy file="${project.build.directory}/${eap.basedir}/bin/standalone.sh" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone-secure.sh" />
+                <copy file="${project.build.directory}/${eap.basedir}/bin/standalone.bat" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone-secure.bat" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone-secure.sh" token="standalone.conf" value="standalone-secure.conf" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/standalone-secure.bat" token="standalone.conf.bat" value="standalone-secure.conf.bat" />
+
+                <concat destfile="${project.build.directory}/${generate-secure-conf-eap}/bin/domain-secure.conf">
+                  <filelist dir="${project.build.directory}/${generate-secure-conf-eap}/bin" files="domain.conf" />
+                  <filelist dir="src/main/resources/" files="security.conf" />
+                </concat>
+                <concat destfile="${project.build.directory}/${generate-secure-conf-eap}/bin/domain-secure.conf.bat">
+                  <filelist dir="${project.build.directory}/${generate-secure-conf-eap}/bin" files="domain.conf.bat" />
+                  <filelist dir="src/main/resources/" files="security.conf.bat" />
+                </concat>
+                <copy file="${project.build.directory}/${eap.basedir}/bin/domain.sh" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/domain-secure.sh" />
+                <copy file="${project.build.directory}/${eap.basedir}/bin/domain.bat" tofile="${project.build.directory}/${generate-secure-conf-eap}/bin/domain-secure.bat" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/domain-secure.sh" token="domain.conf" value="domain-secure.conf" />
+                <replace file="${project.build.directory}/${generate-secure-conf-eap}/bin/domain-secure.bat" token="domain.conf.bat" value="domain-secure.conf.bat" />
+
+                <!-- RHBPMS-4362 Add default user in comment status -->
+                <concat destfile="${project.build.directory}/${generate-secure-conf-eap}/standalone/configuration/application-roles.properties">
+                  <filelist dir="${project.build.directory}/${eap.basedir}/standalone/configuration/" files="application-roles.properties" />
+                  <filelist dir="src/main/resources/" files="default-role.properties" />
+                </concat>
+                <concat destfile="${project.build.directory}/${generate-secure-conf-eap}/standalone/configuration/application-users.properties">
+                  <filelist dir="${project.build.directory}/${eap.basedir}/standalone/configuration/" files="application-users.properties" />
+                  <filelist dir="src/main/resources/" files="default-user.properties" />
+                </concat>
+
+                <concat destfile="${project.build.directory}/${generate-secure-conf-eap}/domain/configuration/application-roles.properties">
+                  <filelist dir="${project.build.directory}/${eap.basedir}/domain/configuration/" files="application-roles.properties" />
+                  <filelist dir="src/main/resources/" files="default-role.properties" />
+                </concat>
+                <concat destfile="${project.build.directory}/${generate-secure-conf-eap}/domain/configuration/application-users.properties">
+                  <filelist dir="${project.build.directory}/${eap.basedir}/domain/configuration/" files="application-users.properties" />
+                  <filelist dir="src/main/resources/" files="default-user.properties" />
+                </concat>
+
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>common-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>rhba-common-${project.version}</finalName>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <appendAssemblyId>true</appendAssemblyId>
+              <attach>true</attach>
+              <descriptors>
+                <descriptor>${basedir}/src/main/assembly/eap-config.zip.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,8 @@
+services:
+  maven:
+    image: quay.io/bamoe/maven-repository:9.1.1-ibm-0003
+    platform: linux/amd64
+    container_name: bamoe-maven-repository
+    ports:
+      - 31000:8080
+

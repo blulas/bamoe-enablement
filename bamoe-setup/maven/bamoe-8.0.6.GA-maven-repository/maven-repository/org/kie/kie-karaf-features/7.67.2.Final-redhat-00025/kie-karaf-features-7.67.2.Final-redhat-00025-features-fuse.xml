@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="karaf-features-fuse-droolsjbpm-7.67.2.Final-redhat-00025"
+          xmlns="http://karaf.apache.org/xmlns/features/v1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.0.0 http://karaf.apache.org/xmlns/features/v1.0.0">
+
+  <repository>mvn:org.kie/kie-karaf-features/7.67.2.Final-redhat-00025/xml/features-core</repository>
+
+  <!--
+   In order to install the below features into Fuse 7, target runtime needs to provide these features:
+    - drools7-dependencies
+    - jbpm7-dependencies
+    - optaplanner-dependencies
+    - kie7-remote-dependencies
+    - db-dependencies
+    - hibernate-dependencies
+    - hibernate-validator-dependencies
+   These features are contained in some repository not referenced explicitly with <repository> (loose coupling).
+   Fuse 7 specific repository is 'mvn:org.jboss.fuse.features/rhba-features/VERSION/xml/features'
+  -->
+
+  <feature name="drools-common" version="7.67.2.Final-redhat-00025" description="Drools Commons">
+    <feature>drools7-dependencies</feature>
+  </feature>
+
+  <feature name="drools-decisiontable" description="Drools Decision Tables" version="7.67.2.Final-redhat-00025">
+    <feature version="7.67.2.Final-redhat-00025">drools-templates</feature>
+    <bundle>mvn:org.drools/drools-decisiontables/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.poi/4.1.2_1</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/3.1.0_2</bundle>
+    <bundle>mvn:org.apache.commons/commons-compress/1.26.2.redhat-00001</bundle>
+    <bundle>mvn:org.apache.commons/commons-math3/3.4.1.redhat-3</bundle>
+  </feature>
+
+  <feature name="drools-wb-guided-decisiontables" description="Drools Workbench Guided Decision Tables" version="7.67.2.Final-redhat-00025">
+    <feature version="7.67.2.Final-redhat-00025">drools-module</feature>
+    <bundle>mvn:org.drools/drools-workbench-models-datamodel-api/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.drools/drools-workbench-models-commons/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.drools/drools-workbench-models-guided-dtable/7.67.2.Final-redhat-00025</bundle>
+  </feature>
+
+  <feature name="kie-dmn" description="Kie DMN" version="7.67.2.Final-redhat-00025">
+    <feature version="7.67.2.Final-redhat-00025">drools-module</feature>
+    <bundle>mvn:org.antlr/antlr4-runtime/4.9.2.redhat-00003</bundle>
+    <bundle>mvn:ch.obermuhlner/big-math/2.0.1</bundle>
+    <bundle>mvn:org.drools/drools-mvel-parser/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie/kie-dmn-model/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie/kie-dmn-api/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie/kie-dmn-backend/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie/kie-dmn-feel/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie/kie-dmn-core-osgi/7.67.2.Final-redhat-00025</bundle>
+  </feature>
+
+  <feature name="jbpm-commons" version="7.67.2.Final-redhat-00025" description="jBPM Commons">
+    <feature>jbpm7-dependencies</feature>
+    <feature version="7.67.2.Final-redhat-00025">servlet-api-kie</feature>
+  </feature>
+
+  <feature name="jbpm-human-task" version="7.67.2.Final-redhat-00025" description="jBPM Human Task">
+    <feature version="7.67.2.Final-redhat-00025">drools-module</feature>
+    <feature version="7.67.2.Final-redhat-00025">drools-jpa</feature>
+    <feature version="7.67.2.Final-redhat-00025">jbpm-commons</feature>
+    <feature version="7.67.2.Final-redhat-00025">kie-dmn</feature>
+    <feature version="7.67.2.Final-redhat-00025">jackson</feature>
+    <bundle>mvn:org.jbpm/jbpm-flow/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-query-jpa/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-audit/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-persistence-api/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-human-task-core/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-human-task-workitems/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-human-task-jpa/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-human-task-audit/7.67.2.Final-redhat-00025</bundle>
+  </feature>
+
+  <feature name="jbpm" version="7.67.2.Final-redhat-00025" description="jBPM Engine">
+    <feature version="7.67.2.Final-redhat-00025">drools-module</feature>
+    <feature version="7.67.2.Final-redhat-00025">drools-jpa</feature>
+    <feature version="7.67.2.Final-redhat-00025">jbpm-commons</feature>
+    <feature version="7.67.2.Final-redhat-00025">jbpm-human-task</feature>
+    <feature version="7.67.2.Final-redhat-00025">jackson</feature>
+    <bundle>mvn:org.jbpm/jbpm-flow-builder/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-flow/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-bpmn2/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-audit/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-query-jpa/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-persistence-api/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-persistence-jpa/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.jbpm/jbpm-runtime-manager/7.67.2.Final-redhat-00025</bundle>
+  </feature>
+
+  <feature name="droolsjbpm-hibernate" version="5.4.24.Final" description="Hibernate 4.2.x JPA persistence engine support">
+    <details>Enable Hibernate 5.x as persistence engine.</details>
+    <feature>transaction</feature>
+    <feature version="[2,3)">jpa</feature>
+    <feature version="7.67.2.Final-redhat-00025">servlet-api-kie</feature>
+    <feature>hibernate-dependencies</feature>
+  </feature>
+
+  <feature name="h2" version="2.2.220" description="H2 database">
+    <feature>db-dependencies</feature>
+    <bundle>mvn:com.h2database/h2/2.2.220</bundle>
+  </feature>
+
+  <feature name="jackson" version="7.67.2.Final-redhat-00025">
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.15.0</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.15.0</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.15.0</bundle>
+    <bundle>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/2.15.0</bundle>
+    <bundle>mvn:com.fasterxml.jackson.datatype/jackson-datatype-jsr310/2.15.0</bundle>
+  </feature>
+
+  <feature name="kie-server-client" version="7.67.2.Final-redhat-00025" description="KIE Server Client">
+    <feature version="7.67.2.Final-redhat-00025">drools-module</feature>
+    <feature version="7.67.2.Final-redhat-00025">jackson</feature>
+    <feature>kie7-remote-dependencies</feature>
+    <bundle>mvn:org.drools/kie-pmml/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie.server/kie-server-api/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie.server/kie-server-common/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie.server/kie-server-client/7.67.2.Final-redhat-00025</bundle>
+    <bundle>mvn:org.kie/kie-dmn-model/7.67.2.Final-redhat-00025</bundle> <!-- needed as the kie-server contains DMN client, which uses the kie-dmn-api, which needs kie-dmn-model -->
+    <bundle>mvn:org.kie/kie-dmn-api/7.67.2.Final-redhat-00025</bundle>   <!-- needed as the kie-server contains DMN client, which uses the kie-dmn-api -->
+    <!-- This bundle will be part of Fuse's kie7-remote-dependencies feature in Fuse 7.11 -->
+    <bundle dependency="true">mvn:org.apache.httpcomponents/httpcore-osgi/4.4.14.redhat-00001</bundle>
+  </feature>
+
+  <feature name="servlet-api-kie" version="7.67.2.Final-redhat-00025">
+    <feature>servlet-api-dependencies</feature>
+  </feature>
+
+  <feature name="kie-pmml" version="7.67.2.Final-redhat-00025">
+    <feature version="7.67.2.Final-redhat-00025">drools-module</feature>
+    <bundle start-level="100">mvn:org.drools/kie-pmml/7.67.2.Final-redhat-00025</bundle>
+  </feature>
+
+</features>

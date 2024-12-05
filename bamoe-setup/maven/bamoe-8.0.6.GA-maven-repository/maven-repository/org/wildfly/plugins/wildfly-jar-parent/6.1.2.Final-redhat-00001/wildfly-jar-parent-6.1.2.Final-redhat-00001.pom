@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2016-2019 Red Hat, Inc. and/or its affiliates
+    and other contributors as indicated by the @author tags.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>36</version>
+  </parent>
+
+  <groupId>org.wildfly.plugins</groupId>
+  <artifactId>wildfly-jar-parent</artifactId>
+  <version>6.1.2.Final-redhat-00001</version>
+  <packaging>pom</packaging>
+
+  <name>WildFly Bootable JAR Plugin Parent</name>
+  <inceptionYear>2019</inceptionYear>
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>https://repository.jboss.org/licenses/apache-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <modules>
+    <module>docs</module>
+    <module>plugin</module>
+    <module>tests</module>
+    <module>extensions</module>
+    <module>perf-tests</module>
+  </modules>
+
+  <properties>
+    <version.wildfly>25.0.1.Final</version.wildfly>
+    <!-- docs properties -->
+    <docs.project.branch>6.1.2.Final</docs.project.branch>
+    <docs.wildfly.major>25</docs.wildfly.major>
+
+    <version.junit>4.13.1</version.junit>
+    <version.org.apache.maven.core>3.3.1</version.org.apache.maven.core>
+    <version.org.apache.maven.plugin-tools>3.5.1</version.org.apache.maven.plugin-tools>
+    <version.org.asciidoctor>2.0.0</version.org.asciidoctor>
+    <version.org.jboss.galleon>4.2.8.Final</version.org.jboss.galleon>
+    <version.org.wildfly.core.wildfly-core>17.0.3.Final</version.org.wildfly.core.wildfly-core>
+    <version.org.wildfly.common>1.5.4.Final</version.org.wildfly.common>
+    <version.org.wildfly.plugins.wildfly-maven-plugin>2.0.1.Final</version.org.wildfly.plugins.wildfly-maven-plugin>
+    <!-- required by tests -->
+    <version.org.apache.httpcomponents.httpclient>4.5.13</version.org.apache.httpcomponents.httpclient>
+    <version.org.eclipse.aether>1.1.0</version.org.eclipse.aether>
+    <version.org.jboss.logging.slf4j-jboss-logging>1.1.0.Final</version.org.jboss.logging.slf4j-jboss-logging>
+    <version.org.apache.maven.plugin-testing.maven-plugin-testing-harness>3.3.0
+    </version.org.apache.maven.plugin-testing.maven-plugin-testing-harness>
+    <version.org.jboss.shrinkwrap.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap.shrinkwrap>
+    <version.org.twdata.maven>2.3.1</version.org.twdata.maven>
+    <!-- Checkstyle configuration -->
+    <linkXRef>false</linkXRef>
+    <version.org.wildfly.checkstyle-config>1.0.8.Final</version.org.wildfly.checkstyle-config>
+    <bootable-jar.repo.scm.connection>git@github.com:wildfly-extras/wildfly-jar-maven-plugin.git</bootable-jar.repo.scm.connection>
+    <bootable-jar.repo.scm.url>https://github.com/wildfly-extras/wildfly-jar-maven-plugin</bootable-jar.repo.scm.url>
+
+    <maven.test.skip>false</maven.test.skip>
+    <skipTests>${maven.test.skip}</skipTests>
+
+    <test.ee.fpl>wildfly-ee@maven(org.jboss.universe:community-universe)#${version.wildfly}</test.ee.fpl>
+    <test.fpl>wildfly@maven(org.jboss.universe:community-universe)#${version.wildfly}</test.fpl>
+    <test.version.wildfly>${version.wildfly}</test.version.wildfly>
+    <test.version.wildfly-ee.upgrade>25.0.0.Beta1</test.version.wildfly-ee.upgrade>
+    <test.patch.ee.product>WildFly EE</test.patch.ee.product>
+    <test.patch.product>WildFly Full</test.patch.product>
+    <test.patch.version>${version.wildfly}</test.patch.version>
+    <wildfly.artifactId>wildfly-galleon-pack</wildfly.artifactId>
+    <wildfly.groupId>org.wildfly</wildfly.groupId>
+    <wildfly-preview.artifactId>wildfly-preview-feature-pack</wildfly-preview.artifactId>
+    <wildfly-preview-build-repo-phase>process-test-resources</wildfly-preview-build-repo-phase>
+    <surefire.redirect.to.file>true</surefire.redirect.to.file>
+  </properties>
+
+  <repositories>
+    
+    <!-- repository needed to provision a full server used as patching distribution source -->
+    
+  </repositories>
+  <pluginRepositories>
+    
+  </pluginRepositories>
+
+  <dependencyManagement>
+    <dependencies>
+     
+     <dependency>
+        <groupId>org.twdata.maven</groupId>
+        <artifactId>mojo-executor</artifactId>
+        <version>${version.org.twdata.maven}</version>
+     </dependency>
+     <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>wildfly-jar-cloud-extension</artifactId>
+        <version>6.1.2.Final-redhat-00001</version>
+      </dependency>
+        
+      <dependency>
+        <groupId>org.wildfly.core</groupId>
+        <artifactId>wildfly-jar-boot</artifactId>
+        <version>${version.org.wildfly.core.wildfly-core}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.wildfly.core</groupId>
+        <artifactId>wildfly-patching</artifactId>
+        <version>${version.org.wildfly.core.wildfly-core}</version>
+      </dependency>
+
+      <!-- Required by controller-client and Galleon provisioning -->
+      <dependency>
+          <groupId>org.wildfly.common</groupId>
+          <artifactId>wildfly-common</artifactId>
+          <version>${version.org.wildfly.common}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-api</artifactId>
+        <version>${version.org.jboss.shrinkwrap.shrinkwrap}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-impl-base</artifactId>
+        <version>${version.org.jboss.shrinkwrap.shrinkwrap}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.wildfly.core</groupId>
+        <artifactId>wildfly-launcher</artifactId>
+        <version>${version.org.wildfly.core.wildfly-core}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.galleon</groupId>
+        <artifactId>galleon-maven-plugin</artifactId>
+        <version>${version.org.jboss.galleon}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>${version.org.apache.maven.core}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.maven.plugin-tools</groupId>
+        <artifactId>maven-plugin-annotations</artifactId>
+        <version>${version.org.apache.maven.plugin-tools}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.wildfly.checkstyle</groupId>
+        <artifactId>wildfly-checkstyle-config</artifactId>
+        <version>${version.org.wildfly.checkstyle-config}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-plugin-core</artifactId>
+        <version>${version.org.wildfly.plugins.wildfly-maven-plugin}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+        <version>${version.org.wildfly.plugins.wildfly-maven-plugin}</version>
+      </dependency>
+      
+    <!-- Needed by tests -->
+      <dependency>
+        <groupId>org.apache.maven.plugin-testing</groupId>
+        <artifactId>maven-plugin-testing-harness</artifactId>
+        <version>${version.org.apache.maven.plugin-testing.maven-plugin-testing-harness}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.aether</groupId>
+        <artifactId>aether-connector-basic</artifactId>
+        <version>${version.org.eclipse.aether}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.aether</groupId>
+        <artifactId>aether-transport-http</artifactId>
+        <version>${version.org.eclipse.aether}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.slf4j</groupId>
+        <artifactId>slf4j-jboss-logging</artifactId>
+        <version>${version.org.jboss.logging.slf4j-jboss-logging}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-compat</artifactId>
+        <version>${version.org.apache.maven.core}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${version.org.apache.httpcomponents.httpclient}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.wildfly.checkstyle</groupId>
+      <artifactId>wildfly-checkstyle-config</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+                                  
+      <plugin>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>wildfly-jar-maven-plugin</artifactId>
+        <version>6.1.2.Final-redhat-00001</version>
+      </plugin>
+      
+      <plugin>
+          <groupId>org.jboss.galleon</groupId>
+          <artifactId>galleon-maven-plugin</artifactId>
+          <version>${version.org.jboss.galleon}</version>
+      </plugin>
+
+        <!-- Checkstyle -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${version.checkstyle.plugin}</version>
+          <configuration>
+            <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+            <consoleOutput>true</consoleOutput>
+            <failsOnError>true</failsOnError>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+            <excludes>**/*$logger.java,**/*$bundle.java,**/HelpMojo.java</excludes>
+            <useFile />
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.wildfly.checkstyle</groupId>
+              <artifactId>wildfly-checkstyle-config</artifactId>
+              <version>${version.org.wildfly.checkstyle-config}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>check-style</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>checkstyle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagNameFormat>@{project.version}</tagNameFormat>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-java</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>1.8</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.commonjava.maven.plugins</groupId>
+        <artifactId>project-sources-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>project-sources-archive</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>archive</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+      <profile>
+          <id>xp</id>
+          <activation>
+              <property>
+                  <name>xp</name>
+              </property>
+          </activation>
+          <properties>
+            <wildfly.groupId>org.jboss.eap</wildfly.groupId>
+            <version.wildfly>3.0.0.GA-redhat-SNAPSHOT</version.wildfly>
+            <test.version.wildfly-ee.upgrade>7.3.6.GA-redhat-00002</test.version.wildfly-ee.upgrade>
+            <test.fpl>${wildfly.groupId}:${wildfly.artifactId}:${version.wildfly}</test.fpl>
+            <test.patch.product>JBoss EAP</test.patch.product>
+            <test.patch.version>7.4.0.GA</test.patch.version>
+            <wildfly-preview-build-repo-phase>none</wildfly-preview-build-repo-phase>
+          </properties>
+      </profile>
+  </profiles>
+  <scm>
+      <connection>scm:git:${bootable-jar.repo.scm.connection}</connection>
+      <developerConnection>scm:git:${bootable-jar.repo.scm.connection}</developerConnection>
+      <url>${bootable-jar.repo.scm.url}</url>
+      <tag>6.1.2.Final</tag>
+  </scm>
+</project>
+<!--
+Modified by POM Manipulation Extension for Maven 4.2 ( SHA: cfe5b3db )
+-->
